@@ -1,27 +1,26 @@
 
 # Importando bibliotecas
-from statistics import mean
 from scipy.integrate import odeint
 from numpy import zeros, arange, pi, sin
 import matplotlib.pyplot as plt
 from matplotlib.ticker import (MultipleLocator)
 import numpy as np
 import time
-
 import os
 import pickle
 
 
+#Variáveis globais
 theta_modelo = arange(0, 30.1, 0.1)
 theta_modelo = list(map(lambda x: round(x, 1), theta_modelo))
+recompensas = {}
 
-
+#Setup referência
 print("\nInsira ângulo inteiro de referência (em graus):")
 ref_aux = int(input('Referência:'))
 
+#Verifica se tabela de q-values já existe
 file_path = f'tabelas/q_values-{ref_aux}-graus.pkl'
-
-
 if os.path.exists(file_path):
     with open(file_path, 'rb') as file:
         q_values = pickle.load(file)
@@ -29,8 +28,6 @@ if os.path.exists(file_path):
 else:
     q_values = np.zeros((len(theta_modelo), 2))
     print("Criada nova tabela de Q_Values!!")
-recompensas = {}
-
 
 #Dinâmica do aeropêndulo
 def din_aeropend(y, t, omega2):
@@ -300,6 +297,7 @@ def plot_q(ref_aux):
     plt.savefig(f'img/q-values-{ref_aux}-eps.png', dpi=300)
     # plt.show(block=True)
 
+#Função que define hiperparâmetros e inicia treinamento
 def treino(eps):
     ref = ref_aux
     param1 = [0.99]
